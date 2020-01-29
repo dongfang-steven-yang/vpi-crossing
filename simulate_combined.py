@@ -2,13 +2,12 @@ import numpy as np
 from simulate import *
 import datetime
 
-pos_range = list(np.arange(-40, -14, 5))
-vel_range = list(np.arange(2, 10.1, 2))
+# pos_range = list(np.arange(-40, -14, 5))
+# vel_range = list(np.arange(2, 10.1, 2))
+pos_range = [-40, -35, -30, -25, -20, -15]
+vel_range = [2, 4, 6, 8, 10]
 date_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-
-veh_init_state = [-40, 20 / R_MPH2mps]  # todo @ add more combinations
-
-control_methods = ['mpc', 'pid']
+control_methods = ['pid']
 predict_method = 'lin_last_obs'
 
 for control_method in control_methods:
@@ -17,7 +16,7 @@ for control_method in control_methods:
         for pos in pos_range:
             i_com = i_com + 1
             print(f'-> ({control_method} in progress) Enter combination ({i_com}/{len(vel_range) * len(pos_range)})')
-            if np.abs(pos/vel) < 12:
+            if np.abs((pos+3.5)/vel) < 12:
                 for num in range(200):
                     init_state = [pos, vel]
                     print(f'--> Starting simulation with vehicle initial state = {init_state}, '

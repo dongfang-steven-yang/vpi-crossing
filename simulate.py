@@ -43,7 +43,7 @@ T_prediction = 3.0  # sec, time horizon of prediction
 
 def sim_once(init_state, control_method, predict_method, num, date_time, suppress_video_save=False):
 
-    pickle_path = f'result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
+    pickle_path = f'D:\\vpi_crossing_result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
                   f'pos {int(init_state[0]):3d} ' \
                   f'vel {int(init_state[1]):2d} ' \
                   f'itr {num:3d}.p'
@@ -123,6 +123,13 @@ def sim_once(init_state, control_method, predict_method, num, date_time, suppres
         ped.update(f_total)
         veh_ego.update(u=u)
 
+        # if collision, write collision info, terminate the loop
+        if f_total[0][0] == float('Inf'):
+            print('--------------------> Collision!')
+            file_er = open(pickle_path[:-2] + '_collision_info.txt', 'w')
+            file_er.write(f'collision happened at t = {i * DT + T0:.3f}.')
+            break
+
     # Save Data -----------------------------------------------------------------------------------------------------
     pickle.dump((layout, ped, veh_ego, ped_sfm, predictor, con_ego), open(pickle_path, "wb"))
 
@@ -134,7 +141,7 @@ def sim_once(init_state, control_method, predict_method, num, date_time, suppres
 
 
 def playback(init_state, control_method, predict_method, num, date_time):
-    pickle_path = f'result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
+    pickle_path = f'D:\\vpi_crossing_result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
                   f'pos {int(init_state[0]):3d} ' \
                   f'vel {int(init_state[1]):2d} ' \
                   f'itr {num:3d}.p'
@@ -145,7 +152,8 @@ def playback(init_state, control_method, predict_method, num, date_time):
 
 
 if __name__ == '__main__':
-    init_states = [[-20, 8], [-20, 6], [-20, 4], [-20, 2], [-25, 8], [-25, 6], [-25, 4]]
+    # init_states = [[-20, 8], [-20, 6], [-20, 4], [-20, 2], [-25, 8], [-25, 6], [-25, 4]]
+    init_states = [[-15, 4]]
     for init_state in init_states:
         print(f'sim with initial state = {init_state}')
         sim_once(

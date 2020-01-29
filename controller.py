@@ -64,8 +64,8 @@ class ModelPredictiveController:
         # data
         obss_closest = self._get_closest_dist(pred=obj_pred, pos_veh_front=x_0[0] + self.vehicle.C2F)
         if self.verbose:
-            print('--> x positions of closest obstacles for all prediction steps:')
-            print(obss_closest)
+            print('--> distances to the closest obstacles for all prediction steps:')
+            print(obss_closest - x_0[0])
 
         # variables
         x = cp.Variable((self.n_state, self.N+1))
@@ -83,8 +83,10 @@ class ModelPredictiveController:
                 x[1, t + 1] >= self.v_min, # vel constraint
                 u[:, t] <= self.u_max,
                 u[:, t] >= self.u_min,  # acc constraint
-                obss_closest[t+1] - x[0, t+1] >= self.d_safe  # safe distance
             ]
+            # safe distance
+            if obss_closest[t + 1] < 1000:
+                constr += [obss_closest[t + 1] - x[0, t + 1] >= self.d_safe]
             # acc rate constraint
             if t > 0:
                 constr += [u[:, t] - u[:, t - 1] >= self.du_min * self.dt,
@@ -97,12 +99,13 @@ class ModelPredictiveController:
         constr += [x[:, 0] == x_0]
 
         # terminal condition
-        constr += [obss_closest[self.N] - x[0, self.N] >= (x[1, self.N] / 2) * self.v_max / (- self.u_min) + self.d_safe]
+        if obss_closest[self.N] < 1000:
+            constr += [obss_closest[self.N] - x[0, self.N] >= (x[1, self.N] / 2) * self.v_max / (- self.u_min) + self.d_safe]
         #     constr += [x[1], self.N] == 0
 
         # construct problem
         problem = cp.Problem(cp.Minimize(cost), constr)
-        problem.solve()
+        problem.solve(solver=cp.SCS, warm_start=True, verbose=True)
         # problem.solve(solver=cp.ECOS, verbose=False)
         # debug
         if self.verbose:
@@ -146,7 +149,7 @@ class ModelPredictiveController:
         return u_out, feasible
 
     def _get_closest_dist(self, pred, pos_veh_front):
-        closest_dist = 1000 * np.ones(len(pred))
+        closest_dist = np.full(len(pred), float('Inf'))
         if pos_veh_front < pred[0][0]: # before the vehicle reach the crossing point
             for i in range(len(pred)):
                 lat_max = pred[i, 1] + pred[i, 2]

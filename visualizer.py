@@ -38,7 +38,6 @@ class SimVisCrossing:
         self.veh_control_u = np.array(con.u_traj)
         self.ped_state = np.array(self.ped.state_traj).swapaxes(0, 1)
 
-
         # figure
         self.fig = plt.figure(figsize=(18, 10))
         self.fig.add_subplot(2, 1, 1)
@@ -227,7 +226,7 @@ class SimVisCrossing:
         ax4.set_ylabel('position (m)')
         ax4.plot(self.traj_t[:self.i_step], self.ped_state[1][:self.i_step], label='y position')
         ax4.set_xlim(self.traj_t[0], self.traj_t[-1])
-        ax4.set_ylim(self.ped_state[1].min() - 1, self.ped_state[1].max() + 1)
+        ax4.set_ylim(self.ped_state[1][:-1].min() - 1, self.ped_state[1][:-1].max() + 1)
 
         ax5.clear()
         ax5.title.set_text('Pedestrian Y Velocity')
@@ -236,7 +235,7 @@ class SimVisCrossing:
         ax5.set_ylabel('velocity (m/s)')
         ax5.plot(self.traj_t[:self.i_step], self.ped_state[3][:self.i_step], label='y velocity')
         ax5.set_xlim(self.traj_t[0], self.traj_t[-1])
-        ax5.set_ylim(self.ped_state[3].min() - 0.5, self.ped_state[3].max() + 0.5)
+        ax5.set_ylim(self.ped_state[3][:-1].min() - 0.5, self.ped_state[3][:-1].max() + 0.5)
 
         ax6.clear()
         ax6.plot(self.traj_t[:self.i_step], self.sfm.state_traj[:self.i_step], '.')

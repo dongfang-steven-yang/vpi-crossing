@@ -83,7 +83,10 @@ class SocialForceCrossing:
 
     def transition(self, veh):
         # implementation
-        gap = (0 - (veh.state[0] + veh.C2F)) / veh.state[1]
+        if veh.state[1] == 0:
+            gap = float('Inf')
+        else:
+            gap = (0 - (veh.state[0] + veh.C2F)) / veh.state[1]
         veh_passed = (veh.state[0] - veh.C2R) > self.ped.state[0]
         if self.state == 'approach':
             # action
@@ -121,7 +124,6 @@ class SocialForceCrossing:
 
         # update time
         self.t = self.t + self.dt
-
         return f_total, fd, fv, self.state
 
     def assign_des(self, des):
@@ -157,8 +159,11 @@ class SocialForceCrossing:
         fd = self._f_des(des, vd)
 
         # total force
-        f_total = fd + fv
-        return f_total, fd, fv
+        if fv[0][0] == float('Inf'): # collision
+            return fv, fv, fv
+        else:
+            f_total = fd + fv
+            return f_total, fd, fv
 
     def _estimate_goal(self):
         raise Exception('Implementation required.')
@@ -191,7 +196,7 @@ class SocialForceCrossing:
             elif y_p < right:
                 p_e = [x_p, right]
             else:
-                raise Exception('Collision!')
+                p_e = [None, None]
         else:  # x < rear
             if y_p > left:
                 p_e = [rear, left]
@@ -199,6 +204,10 @@ class SocialForceCrossing:
                 p_e = [rear, right]
             else:
                 p_e = [rear, y_p]
+
+        # collision check
+        if front + self.ped.R > x_p > rear - self.ped.R and left + self.ped.R > y_p > right - self.ped.R:
+            return np.full((2, 1), float('Inf')), None  # collision, return inf value of fv
 
         # force magnitude
         p_p = np.array([x_p, y_p])
@@ -213,7 +222,10 @@ class SocialForceCrossing:
         d_lon = x_p - front  # longitudinal dist from ped to veh
         d_rem = self.ped.R + left - y_p  # remaining distance
         speed_v = veh.state[1]
-        ttc = d_lon / speed_v  # time to collision for vehicle
+        if speed_v == 0: # time to collision for vehicle
+            ttc = float('Inf')
+        else:
+            ttc = d_lon / speed_v
         ttf = d_rem / self.vd  # time to clear the crosswalk for pedestrian
         if 0 < ttc < ttf:
             vd_adjusted = d_rem / ttc
