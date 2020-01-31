@@ -116,7 +116,8 @@ class SimVisCrossing:
         # --- orientation
         ar_vel_veh = ax_main.arrow(
             x, y, vel * np.cos(yaw), vel * np.sin(yaw),
-            width=0.05, length_includes_head=True,
+            width=0.05,
+            # length_includes_head=True,
             linestyle='-', color='#f08102', head_width=0.3, head_length=0.5
         )
         # --- speed

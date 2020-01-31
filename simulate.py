@@ -8,7 +8,7 @@ from dynamics.dynamics import DynamicLongitudinal_params_simple as params_veh, K
 from controller import ModelPredictiveController, params_control_mpc, params_control_general
 from controller import PIDController, params_control_pid
 
-from prediction.reachable_set import PointMassReachableSet
+# from prediction.reachable_set import PointMassReachableSet
 from prediction.linear import PredictorLinear
 
 from social_force_crossing import SocialForceCrossing, params_SocialForceCrossing
@@ -63,15 +63,17 @@ def sim_once(init_state, control_method, predict_method, num, date_time, suppres
     }
 
     # pedestrian dynamics
+    # params_ped.update({'W_lane': W_lane})
     ped = PointMassNewton(params=params_ped, initial_state=[0.0, -2.0, 0.0, 1.0], dt=DT, t0=T0)
 
     # pedestrian interaction - motion model
+    params_SocialForceCrossing.update({'W_lane': W_lane})
     ped_sfm = SocialForceCrossing(pedestrian=ped, params=params_SocialForceCrossing, W_road=2*W_lane, dt=DT, t0=T0)
 
     # vehicle dynamics
     params_veh.update(KinematicBicycle_params_GAC_GE3)
+    params_control_general.update({'W_lane': W_lane})
     params_veh.update(params_control_general)
-
     veh_ego = DynamicLongitudinal(params=params_veh, initial_state=init_state, dt=DT, t0=T0, lat_pos=W_lane / 2, verbose=False)
 
     # vehicle interaction - controller
@@ -83,14 +85,15 @@ def sim_once(init_state, control_method, predict_method, num, date_time, suppres
     elif control_method == 'pid':
         # -- PID
         params_control_pid.update(params_control_general)
-        con_ego = PIDController(vehicle=veh_ego, params=params_control_pid)
+        con_ego = PIDController(vehicle=veh_ego, params=params_control_pid, verbose=False)
     else:
         raise Exception('Invalid Controller')
 
     # vehicle interaction - predictor
     if predict_method == 'reachable':
         # -- Reachable Set
-        predictor = PointMassReachableSet(dt=DT)
+        # predictor = PointMassReachableSet(dt=DT)
+        pass
     elif predict_method == 'lin_last_obs':
         # -- Linear
         predictor = PredictorLinear(mode='last_obs', dt=DT, t0=T0)
@@ -116,6 +119,8 @@ def sim_once(init_state, control_method, predict_method, num, date_time, suppres
 
         # planning and control
         u, feasible = con_ego.generate_control(ref_speed=init_state[1], obj_pred=prediction)
+        # u, feasible = con_ego.generate_control(ref_speed=init_state[1], obj_pred=prediction, pure_vel_keep=True)
+
         if VERBOSE:
             print(f'Applied u = {u:.4f}.')
 
@@ -153,23 +158,26 @@ def playback(init_state, control_method, predict_method, num, date_time):
 
 if __name__ == '__main__':
     # init_states = [[-20, 8], [-20, 6], [-20, 4], [-20, 2], [-25, 8], [-25, 6], [-25, 4]]
-    init_states = [[-15, 4]]
+    init_states = [[-15, 10]]
+    method = 'pid'
+    note = 'test02'
+
     for init_state in init_states:
         print(f'sim with initial state = {init_state}')
         sim_once(
             init_state=init_state,
-            control_method='mpc',
+            control_method=method,
             predict_method='lin_last_obs',
             num=1,
-            date_time='testdatetime',
+            date_time=note,
             suppress_video_save=True
         )
 
         playback(
             init_state=init_state,
-            control_method='mpc',
+            control_method=method,
             predict_method='lin_last_obs',
             num=1,
-            date_time='testdatetime'
+            date_time=note
         )
 

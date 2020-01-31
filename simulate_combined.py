@@ -2,12 +2,11 @@ import numpy as np
 from simulate import *
 import datetime
 
-# pos_range = list(np.arange(-40, -14, 5))
-# vel_range = list(np.arange(2, 10.1, 2))
-pos_range = [-40, -35, -30, -25, -20, -15]
+# pos_range = [-40, -35, -30, -25, -20, -15]
+pos_range = [-15]
 vel_range = [2, 4, 6, 8, 10]
 date_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-control_methods = ['pid']
+control_methods = ['mpc']
 predict_method = 'lin_last_obs'
 
 for control_method in control_methods:
@@ -20,7 +19,7 @@ for control_method in control_methods:
                 for num in range(200):
                     init_state = [pos, vel]
                     print(f'--> Starting simulation with vehicle initial state = {init_state}, '
-                          f'repeat ({num+1}/200).')
+                          f'no. ({num}).')
                     sim_once(
                         init_state=init_state,
                         control_method=control_method,

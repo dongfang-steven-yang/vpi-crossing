@@ -45,6 +45,7 @@ class SocialForceCrossing:
         self.veh_b = params['veh_b']
         self.des_sigma = params['des_sigma']
         self.des_k = params['des_k']
+        self.W_lane = params['W_lane']
 
         # todo: make it more general - improve - modify
         self.y_wait = -0.5
@@ -77,8 +78,12 @@ class SocialForceCrossing:
         # initialize
         self.des = np.array([0, self.y_wait]).reshape(2, 1)  # assign destination
         self.vd = np.random.normal(self.mu_vd, self.sigma_vd)
+        # self.vd = 1.1322
+
         self.ped.state[3] = self.vd
         self.thr_gap = np.random.normal(self.mu_gap, self.sigma_gap)
+        # self.thr_gap = 4.2692
+
         self.state = 'approach' # state transition
 
     def transition(self, veh):
@@ -88,6 +93,7 @@ class SocialForceCrossing:
         else:
             gap = (0 - (veh.state[0] + veh.C2F)) / veh.state[1]
         veh_passed = (veh.state[0] - veh.C2R) > self.ped.state[0]
+        veh_blocked = (veh.state[0] - veh.C2R) < self.ped.state[0] < (veh.state[0] + veh.C2F)
         if self.state == 'approach':
             # action
             f_total, fd, fv = self.cal_forces(veh=None)
@@ -98,7 +104,7 @@ class SocialForceCrossing:
             # action
             f_total, fd, fv = self.cal_forces(veh=None)
             # state transition
-            if gap > self.thr_gap or veh_passed:
+            if (gap > self.thr_gap or veh_passed) and not veh_blocked:
                 self.assign_des([0, 10])
                 self.state = 'cross'
         elif self.state == 'cross':
@@ -219,8 +225,8 @@ class SocialForceCrossing:
         fv = fun_decaying_exp(d_v2p - self.le - self.ped.R, self.veh_A, self.veh_b) * v_v2p
 
         # Adjusting desired speed ---------------------------------
-        d_lon = x_p - front  # longitudinal dist from ped to veh
-        d_rem = self.ped.R + left - y_p  # remaining distance
+        d_lon = x_p - self.ped.R - front  # longitudinal dist from ped to veh
+        d_rem = self.W_lane + self.ped.R - y_p  # remaining distance
         speed_v = veh.state[1]
         if speed_v == 0: # time to collision for vehicle
             ttc = float('Inf')
