@@ -108,8 +108,8 @@ class ModelPredictiveController:
 
         # construct problem
         problem = cp.Problem(cp.Minimize(cost), constr)
-        # problem.solve(solver=cp.SCS, warm_start=True, verbose=True)
-        problem.solve(solver=cp.ECOS, warm_start=True, verbose=False)
+        problem.solve(solver=cp.SCS, warm_start=True, verbose=True)
+        # problem.solve(solver=cp.ECOS, warm_start=True, verbose=False)
         # debug
         if self.verbose:
             print('--> Predicted vector of states X =')

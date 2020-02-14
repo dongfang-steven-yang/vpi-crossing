@@ -156,11 +156,23 @@ def playback(init_state, control_method, predict_method, num, date_time):
     vis.animate(save_video=True, save_path=pickle_path[:-1] + 'mp4')
 
 
+def display_results(init_state, control_method, predict_method, num, date_time):
+    pickle_path = f'D:\\vpi_crossing_result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
+                  f'pos {int(init_state[0]):3d} ' \
+                  f'vel {int(init_state[1]):2d} ' \
+                  f'itr {num:3d}.p'
+    layout, ped, veh_ego, ped_sfm, predictor, con_ego = pickle.load(open(pickle_path, "rb"))
+    print('Creating figures ...')
+    vis = SimVisCrossing(layout=layout, ped=ped, veh=veh_ego, sfm=ped_sfm, predictor=predictor, con=con_ego)
+    vis.plot(save_figure=True, save_path=pickle_path[:-1] + 'png')
+
+
 if __name__ == '__main__':
     # init_states = [[-20, 8], [-20, 6], [-20, 4], [-20, 2], [-25, 8], [-25, 6], [-25, 4]]
-    init_states = [[-15, 10]]
+    init_states = [[-25, 8]]
     method = 'pid'
-    note = 'test02'
+    note = 'test05example'
+    num = 3
 
     for init_state in init_states:
         print(f'sim with initial state = {init_state}')
@@ -168,16 +180,24 @@ if __name__ == '__main__':
             init_state=init_state,
             control_method=method,
             predict_method='lin_last_obs',
-            num=1,
+            num=num,
             date_time=note,
             suppress_video_save=True
         )
 
-        playback(
+        # playback(
+        #     init_state=init_state,
+        #     control_method=method,
+        #     predict_method='lin_last_obs',
+        #     num=num,
+        #     date_time=note
+        # )
+
+        display_results(
             init_state=init_state,
             control_method=method,
             predict_method='lin_last_obs',
-            num=1,
+            num=num,
             date_time=note
         )
 

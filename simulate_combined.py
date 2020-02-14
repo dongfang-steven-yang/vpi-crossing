@@ -2,11 +2,11 @@ import numpy as np
 from simulate import *
 import datetime
 
-# pos_range = [-40, -35, -30, -25, -20, -15]
-pos_range = [-15]
+pos_range = [-40, -35, -30, -25, -20, -15]
+# pos_range = [-15]
 vel_range = [2, 4, 6, 8, 10]
 date_time = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-control_methods = ['mpc']
+control_methods = ['pid']
 predict_method = 'lin_last_obs'
 
 for control_method in control_methods:

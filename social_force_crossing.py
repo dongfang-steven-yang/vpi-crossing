@@ -78,17 +78,17 @@ class SocialForceCrossing:
         # initialize
         self.des = np.array([0, self.y_wait]).reshape(2, 1)  # assign destination
         self.vd = np.random.normal(self.mu_vd, self.sigma_vd)
-        # self.vd = 1.1322
+        # self.vd = 1.2802
 
         self.ped.state[3] = self.vd
         self.thr_gap = np.random.normal(self.mu_gap, self.sigma_gap)
-        # self.thr_gap = 4.2692
+        # self.thr_gap = 0.7417
 
         self.state = 'approach' # state transition
 
     def transition(self, veh):
         # implementation
-        if veh.state[1] == 0:
+        if veh.state[1] < 0.00001:
             gap = float('Inf')
         else:
             gap = (0 - (veh.state[0] + veh.C2F)) / veh.state[1]
