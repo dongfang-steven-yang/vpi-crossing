@@ -1,15 +1,15 @@
 import numpy as np
 from pathlib import Path
 
-from dynamics.dynamics import PointMassNewton, DynamicLongitudinal
-from dynamics.dynamics import PointMassNewton_params_ped as params_ped
-from dynamics.dynamics import DynamicLongitudinal_params_simple as params_veh, KinematicBicycle_params_GAC_GE3
+from dynamics import PointMassNewton, DynamicLongitudinal
+from dynamics import PointMassNewton_params_ped as params_ped
+from dynamics import DynamicLongitudinal_params_simple as params_veh, KinematicBicycle_params_GAC_GE3
 
 from controller import ModelPredictiveController, params_control_mpc, params_control_general
 from controller import PIDController, params_control_pid
 
 # from prediction.reachable_set import PointMassReachableSet
-from prediction.linear import PredictorLinear
+from veh.modular_pipline.prediction.linear import PredictorLinear
 
 from social_force_crossing import SocialForceCrossing, params_SocialForceCrossing
 

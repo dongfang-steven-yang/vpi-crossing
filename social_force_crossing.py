@@ -1,8 +1,6 @@
 import numpy as np
-import random
-import math
-from dynamics.dynamics import PointMassNewton
-from interaction.social_force_yang import fun_decaying_exp, fun_des_vd
+from dynamics import PointMassNewton
+from ped.social_force_vci.social_force_yang import fun_decaying_exp, fun_des_vd
 # ========================================================
 # Motion Model: Social Force - New Version (Class)
 # Created 2020-01-24
@@ -27,7 +25,7 @@ class SocialForceCrossing:
     def __init__(self, pedestrian, params, W_road, dt, t0, verbose=False):
         """
 
-        :param pedestrians: a list of pedestrian objects
+        :param ped: a list of pedestrian objects
         :param params: common parameters
         :param dt:
         :param t0:

@@ -2,19 +2,19 @@ import numpy as np
 import random
 from pathlib import Path
 
-from dynamics.dynamics import PointMassNewton, PointMassNewton_params_ped as params_PointMassNewton_ped
-from dynamics.dynamics import DynamicLongitudinal, \
+from dynamics import PointMassNewton, PointMassNewton_params_ped as params_PointMassNewton_ped
+from dynamics import DynamicLongitudinal, \
     DynamicLongitudinal_params_simple as params_DynamicLongitudinal, \
     KinematicBicycle_params_GAC_GE3 as params_KinematicBicycle_GAC_GE3
 
-from interaction.social_force_yang import calculate_total_force, params_SocialForceYang as params_vci
+from ped.social_force_vci.social_force_yang import calculate_total_force, params_SocialForceYang as params_vci
 
 from uber_case.longitudinal_mpc import LongitudinalMPC
-from interaction.splines.cubic_spline import generate_trajectory
+from veh.modular_pipline.planning.splines.cubic_spline import generate_trajectory
 
 from uber_case_legacy.tracker import TrackerSingle
 from uber_case_legacy.predictor import PredictorReachableSet
-from utilities.visualizers import SimResultVisualizer
+from sim_env.visualizers import SimResultVisualizer
 
 # Hyper-parameters ---------------------------------------------------------------------------------------------------
 sensor_noise = True  # todo @ future
