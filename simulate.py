@@ -9,7 +9,7 @@ from controller import ModelPredictiveController, params_control_mpc, params_con
 from controller import PIDController, params_control_pid
 
 # from prediction.reachable_set import PointMassReachableSet
-from veh.modular_pipline.prediction.linear import PredictorLinear
+from predictor import PredictorLinear
 
 from social_force_crossing import SocialForceCrossing, params_SocialForceCrossing
 
@@ -17,6 +17,9 @@ import pickle
 
 from visualizer import SimVisCrossing
 
+
+# paths
+result_path = 'result'
 
 # Hyper-parameters ---------------------------------------------------------------------------------------------------
 DT = 0.1  # sec
@@ -42,12 +45,21 @@ T_prediction = 3.0  # sec, time horizon of prediction
 
 
 def sim_once(init_state, control_method, predict_method, num, date_time, suppress_video_save=False):
+    """
 
-    pickle_path = f'D:\\vpi_crossing_result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
-                  f'pos {int(init_state[0]):3d} ' \
-                  f'vel {int(init_state[1]):2d} ' \
-                  f'itr {num:3d}.p'
-
+    :param init_state:
+    :param control_method:
+    :param predict_method:
+    :param num:
+    :param date_time:
+    :param suppress_video_save: used for randomly saving videos when runnning a lot of simulations.
+    :return:
+    """
+    pickle_path = Path(
+        result_path,
+        f'{date_time}_sim_result_{control_method}_{predict_method}',
+        f'pos {int(init_state[0]):3d} vel {int(init_state[1]):2d} itr {num:3d}.p'
+    )
     Path(pickle_path).parent.mkdir(parents=True, exist_ok=True)
 
     # Configs
@@ -146,25 +158,39 @@ def sim_once(init_state, control_method, predict_method, num, date_time, suppres
 
 
 def playback(init_state, control_method, predict_method, num, date_time):
-    pickle_path = f'D:\\vpi_crossing_result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
-                  f'pos {int(init_state[0]):3d} ' \
-                  f'vel {int(init_state[1]):2d} ' \
-                  f'itr {num:3d}.p'
+    # pickle_path = f'vpi_crossing_result/{date_time}_sim_result_{control_method}_{predict_method}/' \
+    #               f'pos {int(init_state[0]):3d} ' \
+    #               f'vel {int(init_state[1]):2d} ' \
+    #               f'itr {num:3d}.p'
+
+    pickle_path = Path(
+        result_path,
+        f'{date_time}_sim_result_{control_method}_{predict_method}',
+        f'pos {int(init_state[0]):3d} vel {int(init_state[1]):2d} itr {num:3d}.p'
+    )
+
     layout, ped, veh_ego, ped_sfm, predictor, con_ego = pickle.load(open(pickle_path, "rb"))
     print('Saving video. This may take some time, please wait.')
     vis = SimVisCrossing(layout=layout, ped=ped, veh=veh_ego, sfm=ped_sfm, predictor=predictor, con=con_ego)
-    vis.animate(save_video=True, save_path=pickle_path[:-1] + 'mp4')
+    vis.animate(save_video=True, save_path=str(pickle_path)[:-1] + 'mp4')
 
 
 def display_results(init_state, control_method, predict_method, num, date_time):
-    pickle_path = f'D:\\vpi_crossing_result\\{date_time}_sim_result_{control_method}_{predict_method}\\' \
-                  f'pos {int(init_state[0]):3d} ' \
-                  f'vel {int(init_state[1]):2d} ' \
-                  f'itr {num:3d}.p'
+    # pickle_path = f'vpi_crossing_result/{date_time}_sim_result_{control_method}_{predict_method}/' \
+    #               f'pos {int(init_state[0]):3d} ' \
+    #               f'vel {int(init_state[1]):2d} ' \
+    #               f'itr {num:3d}.p'
+
+    pickle_path = Path(
+        result_path,
+        f'{date_time}_sim_result_{control_method}_{predict_method}',
+        f'pos {int(init_state[0]):3d} vel {int(init_state[1]):2d} itr {num:3d}.p'
+    )
+
     layout, ped, veh_ego, ped_sfm, predictor, con_ego = pickle.load(open(pickle_path, "rb"))
     print('Creating figures ...')
     vis = SimVisCrossing(layout=layout, ped=ped, veh=veh_ego, sfm=ped_sfm, predictor=predictor, con=con_ego)
-    vis.plot(save_figure=True, save_path=pickle_path[:-1] + 'png')
+    vis.plot(save_figure=True, save_path=str(pickle_path)[:-1] + 'png')
 
 
 if __name__ == '__main__':
@@ -185,13 +211,13 @@ if __name__ == '__main__':
             suppress_video_save=True
         )
 
-        # playback(
-        #     init_state=init_state,
-        #     control_method=method,
-        #     predict_method='lin_last_obs',
-        #     num=num,
-        #     date_time=note
-        # )
+        playback(
+            init_state=init_state,
+            control_method=method,
+            predict_method='lin_last_obs',
+            num=num,
+            date_time=note
+        )
 
         display_results(
             init_state=init_state,

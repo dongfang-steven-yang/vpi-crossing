@@ -1,6 +1,6 @@
 import numpy as np
 from dynamics import PointMassNewton
-from ped.social_force_vci.social_force_yang import fun_decaying_exp, fun_des_vd
+from social_force_yang import fun_decaying_exp, fun_des_vd
 # ========================================================
 # Motion Model: Social Force - New Version (Class)
 # Created 2020-01-24
