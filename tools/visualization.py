@@ -1,13 +1,12 @@
 from matplotlib.animation import FuncAnimation, writers, FFMpegWriter
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
 from matplotlib.patches import Polygon
-from pathlib import Path
-
 # for arrow legends, check: https://stackoverflow.com/questions/22348229/matplotlib-legend-for-an-arrow
 from matplotlib.legend_handler import HandlerPatch
 import matplotlib.patches as mpatches
+
+plt.rcParams['pdf.fonttype'] = 42
 
 
 class SimVisCrossing:
@@ -68,15 +67,37 @@ class SimVisCrossing:
         self._plot_main_scene_small(ax=ax4, step=frames[3], legend=True)
 
         # figure data
-        self.fig_data = plt.figure(figsize=(8, 12))
-        ax1s = self.fig_data.add_subplot(7, 1, 1)
-        ax2s = self.fig_data.add_subplot(7, 1, 2)
-        ax3s = self.fig_data.add_subplot(7, 1, 3)
-        ax4s = self.fig_data.add_subplot(7, 1, 4)
-        ax5s = self.fig_data.add_subplot(7, 1, 5)
-        ax6s = self.fig_data.add_subplot(7, 1, 6)
-        ax7s = self.fig_data.add_subplot(7, 1, 7)
-        self.fig_data.subplots_adjust(left=0.1, bottom=0.04, right=0.99, top=0.98, wspace=0.13, hspace=0.84)
+        # self.fig_data = plt.figure(figsize=(8, 12))
+        # ax1s = self.fig_data.add_subplot(7, 1, 1)
+        # ax2s = self.fig_data.add_subplot(7, 1, 2)
+        # ax3s = self.fig_data.add_subplot(7, 1, 3)
+        # ax4s = self.fig_data.add_subplot(7, 1, 4)
+        # ax5s = self.fig_data.add_subplot(7, 1, 5)
+        # ax6s = self.fig_data.add_subplot(7, 1, 6)
+        # ax7s = self.fig_data.add_subplot(7, 1, 7)
+        # self.fig_data.subplots_adjust(left=0.1, bottom=0.04, right=0.99, top=0.98, wspace=0.13, hspace=0.84)
+
+        self.fig_data = plt.figure(figsize=(8, 6))
+        ax1s = self.fig_data.add_subplot(4, 2, 1)
+        ax2s = self.fig_data.add_subplot(4, 2, 2)
+        ax3s = self.fig_data.add_subplot(4, 2, 3)
+        ax4s = self.fig_data.add_subplot(4, 2, 4)
+        ax5s = self.fig_data.add_subplot(4, 2, 5)
+        ax6s = self.fig_data.add_subplot(4, 2, 6)
+        ax7s = self.fig_data.add_subplot(4, 2, 7)
+        self.fig_data.subplots_adjust(left=0.1, bottom=0.08, right=0.99, top=0.95, wspace=0.18, hspace=0.84)
+
+
+        # # vehicle
+        # self._plot_veh_x_pos(ax1s)
+        # self._plot_veh_x_vel(ax2s)
+        # self._plot_veh_control(ax3s)
+        #
+        # # pedestrian
+        # self._plot_ped_y_pos(ax4s)
+        # self._plot_ped_speed(ax5s)
+        # self._plot_ped_state(ax6s)
+        # self._plot_ped_gap(ax7s)
 
         # vehicle
         self._plot_veh_x_pos(ax1s)
@@ -86,18 +107,13 @@ class SimVisCrossing:
         # pedestrian
         self._plot_ped_y_pos(ax4s)
         self._plot_ped_speed(ax5s)
-        self._plot_ped_state(ax6s)
-        self._plot_ped_gap(ax7s)
+        self._plot_ped_gap(ax6s)
+        self._plot_ped_state(ax7s)
 
         self.fig_scene.savefig(save_path[:-4] + '_scene.png', dpi=300)
-        self.fig_scene.savefig(save_path[:-4] + '_scene.pdf')
+        # self.fig_scene.savefig(save_path[:-4] + '_scene.pdf')
         self.fig_data.savefig(save_path[:-4] + '_data.png', dpi=300)
-        self.fig_data.savefig(save_path[:-4] + '_data.pdf')
-
-        print('Result figure saved.')
-
-
-
+        # self.fig_data.savefig(save_path[:-4] + '_data.pdf')
 
 
     def animate(self, save_video=False, save_path='sim_test.mp4'):
@@ -160,7 +176,8 @@ class SimVisCrossing:
             # print(self.i_step)
             self.i_step = self.i_step + 1
         else:
-            print("All sequences have been displayed ! ")
+            pass
+            # print("All sequences have been displayed ! ")
             # self.fig.savefig(str(self.path_saving_last_frame + '.png'), dpi=300)
             # self.fig.savefig(str(self.path_saving_last_frame + '.pdf'))
             # sys.exit()

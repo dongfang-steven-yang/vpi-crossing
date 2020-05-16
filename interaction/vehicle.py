@@ -178,9 +178,12 @@ params_control_pid = {
 
 
 class PIDController:
-    def __init__(self, vehicle, params, verbose=False):
+    def __init__(self, vehicle, params, pure_vel_keep=False, verbose=False):
         # linked objects
         self.vehicle = vehicle
+
+        # act as pure velocity keeping control
+        self.pure_vel_keep = pure_vel_keep
 
         # parameters
         self.dt = vehicle.dt
@@ -211,7 +214,7 @@ class PIDController:
         self.u_traj = []
         self.target_traj = []
 
-    def generate_control(self, ref_speed, obj_pred, pure_vel_keep=False):
+    def generate_control(self, ref_speed, obj_pred):
         u_last = self.vehicle.u_last
 
         # integral term
@@ -227,7 +230,7 @@ class PIDController:
         min_target = min(targets)
 
         # cruise control or obstacle avoidance
-        if min_target < 1000 and not pure_vel_keep:
+        if min_target < 1000 and not self.pure_vel_keep:
             d_dec = min_target - (self.vehicle.state[0] + self.vehicle.C2F) - self.d_safe
             if d_dec < 0:  # no enough dist. apply maximum break
                 u = self.u_min
@@ -262,6 +265,5 @@ class PIDController:
                     closest_dist[i] = lon_min
 
         return closest_dist
-
 
 

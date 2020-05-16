@@ -1,6 +1,5 @@
 import numpy as np
-from dynamics import PointMassNewton
-from social_force_yang import fun_decaying_exp, fun_des_vd
+from motion.pedestrian import PointMassNewton
 # ========================================================
 # Motion Model: Social Force - New Version (Class)
 # Created 2020-01-24
@@ -17,7 +16,6 @@ params_SocialForceCrossing = {
     # todo: add different pedestrian type
     'mu_vd': 1.4,
     'sigma_vd': 0.2,
-
 }
 
 
@@ -242,6 +240,20 @@ class SocialForceCrossing:
         vec_vd = fun_des_vd(self.ped.state[:2], des, v0, self.des_sigma)
         fd = self.des_k * (vec_vd - self.ped.state[2:].reshape(2, 1))
         return fd
+
+
+def fun_decaying_exp(d, A, b):
+    return A * np.exp(- b * d)
+
+
+def fun_des_vd(ego, des, des_vd, des_sigma):
+    des = np.array(des).reshape(2, 1)
+    ego = np.array(ego).reshape(2, 1)
+    r_ped2des = des - ego
+    d_ped2des = np.linalg.norm(r_ped2des)
+    vec_vd = des_vd * (des - ego) / np.sqrt(d_ped2des ** 2 + des_sigma)
+    return vec_vd
+
 
 
 # TEST
