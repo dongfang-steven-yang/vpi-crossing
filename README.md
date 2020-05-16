@@ -30,10 +30,13 @@ Video demostration of two different vehicle control strategies:
 - Model predctive control (MPC)
 - Obstacle avoidance control (OAC)
 
-<video width="320" height="240" controls>
+<!-- <video width="320" height="240" controls>
   <source src="repo_media/video_sim_mpc.mp4" type="video/mp4">
 Your browser does not support the video tag.
-</video>
+</video> -->
+
+[![Demo CountPages alpha](repo_media/video.gif)](https://youtu.be/PDsNBEVrVhw)
+
 
 Plots of a simulation example using MPC:
 
