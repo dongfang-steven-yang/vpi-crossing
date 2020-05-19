@@ -50,7 +50,7 @@ State evolution of the above simulation example:
 
 Environment Configuration:
 - `python3.6+` is required.
-- You need to install the packages specified in `requirements.txt` file. You can either use `pip install -r requirements.txt` to automatically install all the required packages.
+- You need to install the packages specified in `requirements.txt` file. You can either use `pip install -r requirements.txt` to automatically install all the required packages or install them manually one by one.
 
 Running the program:
 - `simulate.py`: run this script to start a simulation.
