@@ -35,13 +35,13 @@ Your browser does not support the video tag.
 [![Demo CountPages alpha](repo_media/video.gif)](https://youtu.be/PDsNBEVrVhw)
 
 
-Plots of a simulation example using MPC:
+<!-- Plots of a simulation example using MPC:
 
 ![scene](repo_media/sim_scene.png)
 
 State evolution of the above simulation example:
 
-![data](repo_media/sim_data.png)
+![data](repo_media/sim_data.png) -->
 
 <!-- <img src="repo_media/sim_scene.png" width="600">
 <img src="repo_media/sim_data.png" width="600"> -->
